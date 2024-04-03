@@ -20,7 +20,6 @@ import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
 
-import NavToggle from '/Users/sam/Downloads/vuexy-vuejs-html-laravel-admin-dashboard-template-v10.0.0/next-version/javascript-version/starter-kit/src/components/layout/vertical/NavToggle.jsx'
 
 import ModeDropdown from '@components/layout/shared/ModeDropdown'
 
