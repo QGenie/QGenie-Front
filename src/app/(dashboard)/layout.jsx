@@ -23,7 +23,7 @@ const Layout = async ({ children }) => {
   const direction = 'ltr'
   const mode = getMode()
   const systemMode = getSystemMode()
-
+  
   return (
     <Providers direction={direction}>
       <LayoutWrapper

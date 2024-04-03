@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 // Next Imports
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
+import { useRouter,redirect, useParams } from 'next/navigation'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -30,6 +30,7 @@ import AuthIllustrationWrapper from './AuthIllustrationWrapper'
 
 const Register = () => {
   // States
+  const router = useRouter();
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [firstname, setFirstname] = useState("");
   const [lastname, setlastname] = useState("");
@@ -65,7 +66,9 @@ const Register = () => {
         cpassword
 
       })
-      console.log(response)
+      localStorage.setItem('email', email);
+      router.push('/verifyaccount'); 
+     
     }catch(err)
     {
       console.error(err)

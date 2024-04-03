@@ -19,6 +19,14 @@ export const signup = async (userData) => {
     throw error.response.data;
   }
 };
+export const verifyemail = async (email,code) => {
+    try {
+      const response = await axios.post('/users/verify_email/', {email, code});
+      return response.data;
+    } catch (error) {
+      throw error.response.data;
+    }
+  };
 
 export const getUser = async (userId, authToken) => {
   try {
