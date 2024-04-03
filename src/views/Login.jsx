@@ -17,7 +17,7 @@ import Checkbox from '@mui/material/Checkbox'
 import Button from '@mui/material/Button'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Divider from '@mui/material/Divider'
-
+import {login} from '../utils/user'
 // Component Imports
 import CustomTextField from '@core/components/mui/TextField'
 
@@ -35,6 +35,31 @@ const Login = () => {
   const { lang: locale } = useParams()
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+
+  const onPasswordChange = (event) =>{
+    setPassword(event.target.value);
+  }
+  const onEmailChange = (event) =>{
+    setEmail(event.target.value);
+  } 
+
+  const onSubmit = async(e)=>{
+    try{
+      e.preventDefault();
+  
+      const response = await login(email,password);
+
+      console.log(response);
+    }catch(err)
+    {
+      console.error(err);
+    }
+     
+  }
+
   return (
     <div className='flex justify-center items-center h-screen'>
       <AuthIllustrationWrapper>
@@ -47,16 +72,20 @@ const Login = () => {
               <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}! 👋🏻`}</Typography>
               <Typography>Please sign-in to your account to use our features</Typography>
             </div>
-            <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()} className='flex flex-col gap-6'>
+            <form noValidate autoComplete='off' onSubmit={(e) => onSubmit(e)} className='flex flex-col gap-6'>
               <CustomTextField
                 autoFocus
                 fullWidth
+                value={email}
+                onChange={onEmailChange}
                 label='Email or Username'
                 placeholder='Enter your email or username'
               />
               <CustomTextField
                 fullWidth
                 label='Password'
+                value={password}
+                onChange={onPasswordChange}
                 placeholder='············'
                 id='outlined-adornment-password'
                 type={isPasswordShown ? 'text' : 'password'}

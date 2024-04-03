@@ -23,15 +23,25 @@
       "static/css/css-src_menu_styles_horizontal_horizontalUl_module_css-src_menu_styles_styles_module_css-src_-844db0.css",
       "static/chunks/app/(dashboard)/layout.js"
     ],
+    "/(blank-layout-pages)/login/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(blank-layout-pages)/login/page.js"
+    ],
+    "/(blank-layout-pages)/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(blank-layout-pages)/layout.js"
+    ],
     "/[...not-found]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/[...not-found]/page.js"
     ],
-    "/(dashboard)/session/page": [
+    "/(blank-layout-pages)/register/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/(dashboard)/session/page.js"
+      "static/chunks/app/(blank-layout-pages)/register/page.js"
     ]
   }
 }
