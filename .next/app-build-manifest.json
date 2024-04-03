@@ -27,6 +27,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/[...not-found]/page.js"
+    ],
+    "/(dashboard)/session/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(dashboard)/session/page.js"
     ]
   }
 }
