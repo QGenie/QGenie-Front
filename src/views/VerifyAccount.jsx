@@ -8,7 +8,7 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
-
+import { useRouter } from 'next/navigation'
 // Component Imports
 import Logo from '@components/layout/shared/Logo'
 import CustomTextField from '@core/components/mui/TextField'
@@ -18,7 +18,7 @@ import AuthIllustrationWrapper from './AuthIllustrationWrapper'
 import { useRef, useState } from 'react'
 
 const VerifyAccount = () => {
-
+  const router = useRouter();
   const [code, setCode] = useState("");
   const inputRefs = useRef([]);
   const onChangeCode = (event, index) => {
@@ -30,7 +30,7 @@ const VerifyAccount = () => {
       const newCode = prevCode.substring(0, index) + value + prevCode.substring(index + 1);
       return newCode;
     });
-
+console.log(code);
     // Move focus to the next input field if a number is entered and it's not the last input field
     if (/^\d$/.test(value) && nextIndex < inputRefs.current.length) {
       inputRefs.current[nextIndex].focus();
@@ -43,6 +43,10 @@ const VerifyAccount = () => {
           const email = localStorage.getItem('email');
           console.log(email);
           const response = await verifyemail(email,code);
+          if(response!=null)
+          {
+            router.push('/login');
+          }
           console.log(response);
         }
         catch(err){

@@ -26,9 +26,11 @@ import themeConfig from '@configs/themeConfig'
 
 // Styled Component Imports
 import AuthIllustrationWrapper from './AuthIllustrationWrapper'
+import { useRouter } from 'next/navigation'
 
 const Login = () => {
   // States
+  const router = useRouter();
   const [isPasswordShown, setIsPasswordShown] = useState(false)
 
   // Hooks
@@ -51,8 +53,13 @@ const Login = () => {
       e.preventDefault();
   
       const response = await login(email,password);
+      if(response.token !=null)
+      {
+          localStorage.setItem('email', email);
+          localStorage.setItem('auth', response.token);
+          router.push('/home');
+      }
 
-      console.log(response);
     }catch(err)
     {
       console.error(err);
