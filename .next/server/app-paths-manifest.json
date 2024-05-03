@@ -1,4 +1,8 @@
 {
+  "/[...not-found]/page": "app/[...not-found]/page.js",
   "/(dashboard)/home/page": "app/(dashboard)/home/page.js",
-  "/(dashboard)/session/page": "app/(dashboard)/session/page.js"
+  "/(blank-layout-pages)/login/page": "app/(blank-layout-pages)/login/page.js",
+  "/(blank-layout-pages)/register/page": "app/(blank-layout-pages)/register/page.js",
+  "/(blank-layout-pages)/verifyaccount/page": "app/(blank-layout-pages)/verifyaccount/page.js",
+  "/(blank-layout-pages)/resetpassword/page": "app/(blank-layout-pages)/resetpassword/page.js"
 }
