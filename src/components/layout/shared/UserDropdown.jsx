@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 
 // Next Imports
 import { useRouter } from 'next/navigation'
@@ -41,6 +41,7 @@ const BadgeContentSpan = styled('span')({
 const UserDropdown = () => {
   // States
   const [open, setOpen] = useState(false)
+  const [email, setEmail] = useState('')
 
   // Refs
   const anchorRef = useRef(null)
@@ -48,6 +49,11 @@ const UserDropdown = () => {
   // Hooks
   const router = useRouter()
   const { settings } = useSettings()
+
+  useEffect(()=>{
+    const email = localStorage.getItem('email');
+    setEmail(email)
+  },[])
 
   const handleDropdownOpen = () => {
     !open ? setOpen(true) : setOpen(false)
@@ -66,7 +72,7 @@ const UserDropdown = () => {
   }
 
   const handleUserLogout = async () => {
-    // Redirect to login page
+    localStorage.removeItem('auth')
     router.push('/login')
   }
 
@@ -79,7 +85,7 @@ const UserDropdown = () => {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         className='mis-2'
       >
-      <CustomAvatar ref={anchorRef} onClick={handleDropdownOpen} className='cursor-pointer bs-[38px] is-[38px]' color='primary' skin='light'>SM</CustomAvatar>
+      <CustomAvatar ref={anchorRef} onClick={handleDropdownOpen} className='cursor-pointer bs-[38px] is-[38px]' color='primary' skin='light'>{email.substring(0, 2).toUpperCase()}</CustomAvatar>
       </Badge>
       <Popper
         open={open}
@@ -100,18 +106,14 @@ const UserDropdown = () => {
               <ClickAwayListener onClickAway={e => handleDropdownClose(e)}>
                 <MenuList>
                   <div className='flex items-center plb-2 pli-6 gap-2' tabIndex={-1}>
-                  <CustomAvatar color='primary' skin='light'>SM</CustomAvatar>
+                  <CustomAvatar color='primary' skin='light'>{email.substring(0, 2).toUpperCase()}</CustomAvatar>
                     <div className='flex items-start flex-col'>
                       <Typography className='font-medium' color='text.primary'>
-                      samy.mebarki@univ-constantine2.dz
+                      {email}
                       </Typography>
                     </div>
                   </div>
                   <Divider className='mlb-1' />
-                  <MenuItem className='mli-2 gap-3' onClick={e => handleDropdownClose(e)}>
-                    <i className='tabler-settings text-[22px]' />
-                    <Typography color='text.primary'>Settings</Typography>
-                  </MenuItem>
                   <div className='flex items-center plb-2 pli-3'>
                     <Button
                       fullWidth

@@ -1,7 +1,8 @@
 'use client'
 
 // React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { redirect } from 'next/navigation'
 
 // MUI Imports
 import { styled, useTheme } from '@mui/material/styles'
@@ -20,12 +21,17 @@ import Icon from '@mui/material/Icon'
 import Divider from '@mui/material/Divider'
 import MuiStep from '@mui/material/Step'
 import TextField from '@mui/material/TextField'
+import CircularProgress from '@mui/material/CircularProgress'
 
 import QuestionMarkRoundedIcon from '@mui/icons-material/QuestionMarkRounded'
 import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded'
 import RuleRoundedIcon from '@mui/icons-material/RuleRounded'
 import ShuffleRoundedIcon from '@mui/icons-material/ShuffleRounded'
 import MinimizeRoundedIcon from '@mui/icons-material/MinimizeRounded'
+import TranslateIcon from '@mui/icons-material/Translate'
+import ExplicitIcon from '@mui/icons-material/Explicit'
+import {postSession} from '/src/utils/session'
+import {postQuestion } from '/src/utils/question'
 
 // Third-party Imports
 import { toast } from 'react-toastify'
@@ -42,30 +48,15 @@ import StepperWrapper from '@core/styles/stepper'
 // Vars
 const steps = [
   {
-    icon: RuleRoundedIcon,
-    title: 'MCQs',
-    value: 'mcq'
+    icon: ExplicitIcon ,
+    title: 'English',
+    value: 'english'
   },
   {
-    icon: ShuffleRoundedIcon,
-    title: 'Match the answers',
-    value: 'match'
+    icon: TranslateIcon,
+    title: 'Arabic',
+    value: 'arabic'
   },
-  {
-    icon: QuestionMarkRoundedIcon,
-    title: 'Simple Questions',
-    value: 'simple'
-  },
-  {
-    icon: TaskAltRoundedIcon,
-    title: 'True/False',
-    value: 'truefalse'
-  },
-  {
-    icon: MinimizeRoundedIcon,
-    title: 'Fill in the blanks',
-    value: 'fill'
-  }
 ]
 
 const Step = styled(MuiStep)(({ theme }) => ({
@@ -91,10 +82,60 @@ const Step = styled(MuiStep)(({ theme }) => ({
 }))
 
 const StepperCustomHorizontal = () => {
+
   // States
   const [activeStep, setActiveStep] = useState('')
   const theme = useTheme()
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'))
+  const [lang,setLang] = useState('');
+  const [text, setText] = useState('');
+  const [answer, setAnswer] = useState('');
+  const [res,setRes] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState('');
+
+  
+  
+  useEffect(() => {
+    const auth = localStorage.getItem('auth');
+    if (auth === null) {
+        redirect('/login');
+    } else {
+        setToken(auth);
+    }
+}, []);
+    
+
+
+
+  const handleChange = (event) => {
+    setText(event.target.value);
+};
+const handleChangeAnswer = (event) => {
+  setAnswer(event.target.value);
+};
+
+  const handleClick = async (e) => {
+    try {
+        e.preventDefault();
+        console.log('Token:', token)
+        setLoading(true);
+        const title = text.substring(0, 15);
+        const sessionResponse = await postSession(title,token);
+        console.log('Session:', sessionResponse)
+        const session = sessionResponse.id;
+        const question = await postQuestion(session, lang, text,res,token,answer);
+        setRes(question['question']);
+        
+        
+    } catch (error) {
+        // Handle errors
+        console.error('Error:', error);
+    } finally {
+        setLoading(false);
+    }
+};
+
 
   return (
     <>
@@ -129,7 +170,7 @@ const StepperCustomHorizontal = () => {
                         style={{
                           backgroundColor: 'transparent'
                         }}
-                        onClick={() => setActiveStep(step.value)}
+                        onClick={(event) => {setLang(step.value);setActiveStep(step.value)}}
                       >
                         <step.icon />
                       </IconButton>
@@ -149,19 +190,35 @@ const StepperCustomHorizontal = () => {
         <CardContent>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth rows={15} multiline label='Text' defaultValue='' id='textarea-outlined-static' />
+              <TextField fullWidth rows={12} multiline label='Text' defaultValue='' id='textarea-outlined-static' value={text} onChange={handleChange} />
+              <TextField fullWidth rows={1} multiline label='Answer' defaultValue='' id='textarea-outlined-static' value={answer} onChange={handleChangeAnswer}  sx={{marginTop: 5 }}/>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                rows={15}
-                multiline
-                label='Results'
-                defaultValue=''
-                id='textarea-outlined-static'
-                disabled
-              />
+            {loading ? (
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <CircularProgress />
+                </div>
+            ) : (
+                <TextField
+                    fullWidth
+                    rows={15}
+                    multiline
+                    label='Results'
+                    value={res}
+                    id='textarea-outlined-static'
+                    readOnly
+                />
+            )}
             </Grid>
+          </Grid>
+          <Grid container spacing={2} sx={{marginTop: 5 }}>
+          </Grid>
+          <Grid>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant='contained' type='submit' disabled={loading} onClick={handleClick} sx={{marginTop: 5 }} >
+            {loading ? <CircularProgress size={24} /> : 'Generate'}
+            </Button> 
+          </div>
           </Grid>
         </CardContent>
       </Card>
