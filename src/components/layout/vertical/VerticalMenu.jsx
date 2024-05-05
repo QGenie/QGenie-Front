@@ -1,5 +1,9 @@
 'use client'
+import { useRef, useState, useEffect } from 'react'
+import { redirect,useRouter,usePathname } from 'next/navigation'
 
+ // Import MenuItem from your menu item library
+import { getSession } from '/src/utils/session.js'; 
 // MUI Imports
 import { useTheme } from '@mui/material/styles'
 import { Box } from '@mui/system'
@@ -40,11 +44,51 @@ const VerticalMenu = ({ scrollMenu }) => {
   const verticalNavOptions = useVerticalNav()
   const { settings } = useSettings()
   const { isBreakpointReached } = useVerticalNav()
+  const [email, setEmail] = useState('')
+  const [initials, setInitials] = useState('')
+  const [sessions, setSessions] = useState([]);
+  const [token, setToken] = useState('');
+  const router = useRouter()
+  const currentPage = usePathname()
 
+    useEffect(() => {
+      const auth = localStorage.getItem('auth');
+    if (auth === null) {
+        redirect('/login');
+    } else {
+        setToken(auth);
+        getSession(auth)
+            .then(response => {
+                // Set sessions data in state
+                console.log('sessions:', response)
+                setSessions(response);
+            })
+            .catch(error => {
+                console.error('Error fetching sessions:', error);
+            });
+    }   
+    }, []);
+    const handleSession = (sessionId) => {
+      console.log('Session clicked with ID:', sessionId);
+      localStorage.setItem('sessionId', sessionId);
+      console.log('Current route:', currentPage);
+      if (currentPage !== '/session') {
+        router.push('/session');
+      } else {
+        console.log('Reloading page...');
+        window.location.reload();
+      }
+    };
   // Vars
   const { transitionDuration } = verticalNavOptions
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar
-
+  useEffect(()=>{
+    const email = localStorage.getItem('email');
+    setEmail(email)
+    const atIndex = email.indexOf('@');
+    const initials = atIndex !== -1 ? email.substring(0, atIndex) : '';
+    setInitials(initials)
+  },{})
   return (
     // eslint-disable-next-line lines-around-comment
     /* Custom scrollbar instead of browser scroll, remove if you want browser scroll only */
@@ -89,9 +133,11 @@ const VerticalMenu = ({ scrollMenu }) => {
         <MenuSection label='Apps'></MenuSection>
         <MenuItem href='/home'>Question Generator</MenuItem>
         <MenuSection label='Sessions'></MenuSection>
-        <MenuItem href='/session' icon={<i className='tabler-info-circle' />}>
-          Session 01
-        </MenuItem>
+        {sessions && sessions.map(session => (
+                <MenuItem key={session.id} onClick={() => handleSession(session.id)} icon={<i className='tabler-info-circle' />}>
+                    {session.title}
+                </MenuItem>
+            ))}
         <Box
           sx={{
             position: 'absolute',
@@ -109,7 +155,7 @@ const VerticalMenu = ({ scrollMenu }) => {
           <div style={{ marginRight: 5 }}>
             <UserDropdown />
           </div>
-          <Typography color='text.primary'>Samy Mebarki</Typography>
+          <Typography color='text.primary'>{initials}</Typography>
           <div style={{ marginLeft: 50 }}>
             <NavToggle />
           </div>
